@@ -1,103 +1,105 @@
 import Image from "next/image";
+import { FileText, ShieldCheck, Stethoscope, Video } from "lucide-react";
+import { Hero } from "@/components/sections/Hero";
+import { StakeholderModel } from "@/components/sections/StakeholderModel";
+import { ProcessTimeline } from "@/components/sections/ProcessTimeline";
+import { ServicesGrid } from "@/components/sections/ServicesGrid";
+import { Transparency } from "@/components/sections/Transparency";
+import { IllustrativeExample } from "@/components/sections/IllustrativeExample";
+import { RiskSection } from "@/components/sections/RiskSection";
+import { FinalCta } from "@/components/sections/FinalCta";
+import { Accent, ButtonLink, CheckList, Container, Eyebrow, Section } from "@/components/ui/primitives";
 
-export default function Home() {
+const principles = [
+  { icon: FileText, title: "Documented purchases", body: "Price and animal details recorded" },
+  { icon: ShieldCheck, title: "Verified farmers", body: "Screened before any allocation" },
+  { icon: Stethoscope, title: "Coordinated vet care", body: "Examinations and vaccinations" },
+  { icon: Video, title: "Monthly updates", body: "Video, photos and condition notes" },
+];
+
+export default function HomePage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <Hero />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      {/* Principles band */}
+      <div className="border-b border-forest/10 bg-white">
+        <Container>
+          <ul className="grid grid-cols-2 divide-forest/10 lg:grid-cols-4 lg:divide-x">
+            {principles.map(({ icon: Icon, title, body }) => (
+              <li key={title} className="flex items-start gap-4 py-7 lg:px-8 lg:first:pl-0">
+                <Icon aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
+                <div>
+                  <p className="text-sm font-semibold text-forest">{title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-ink-500 sm:text-sm">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </div>
+
+      <StakeholderModel />
+      <ProcessTimeline />
+      <ServicesGrid />
+      <Transparency />
+      <IllustrativeExample />
+      <RiskSection />
+
+      {/* Two journeys */}
+      <Section tone="ivory">
+        <Container>
+          <div className="grid gap-6 lg:grid-cols-2">
+            {[
+              {
+                eyebrow: "For investors",
+                title: <>Put capital to work in <Accent>real agriculture.</Accent></>,
+                body: "Understand the model, the fees and the risks, then speak with our team. No payment is requested to explore.",
+                points: ["Documented purchase and records", "Monthly progress updates", "Clear fee and settlement calculation"],
+                href: "/investors",
+                cta: "Explore Livestock Investment",
+                image: "/images/herd-grass.jpg",
+                alt: "A herd of cattle grazing on lush grass",
+              },
+              {
+                eyebrow: "For farmers",
+                title: <>Grow with a <Accent>better partnership.</Accent></>,
+                body: "Raise livestock with coordinated veterinary support and earn a defined share of the profit for your skill and care.",
+                points: ["Veterinary coordination", "Clear written responsibilities", "Agreed profit share at sale"],
+                href: "/farmers",
+                cta: "Become a Partner Farmer",
+                image: "/images/goats.jpg",
+                alt: "Goats gathered in a well-kept farm enclosure",
+              },
+            ].map((j) => (
+              <article
+                key={j.href}
+                className="group relative isolate flex min-h-[30rem] flex-col justify-end overflow-hidden rounded-3xl p-8 text-ivory sm:p-10"
+              >
+                <Image
+                  src={j.image}
+                  alt={j.alt}
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="-z-20 object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-forest-950 via-forest-950/80 to-forest-950/45" />
+                <Eyebrow dark>{j.eyebrow}</Eyebrow>
+                <h2 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">{j.title}</h2>
+                <p className="mt-4 max-w-md text-ivory/75">{j.body}</p>
+                <CheckList dark items={j.points} className="mt-6" />
+                <div className="mt-8">
+                  <ButtonLink href={j.href} variant="gold" arrow>
+                    {j.cta}
+                  </ButtonLink>
+                </div>
+              </article>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      <FinalCta />
+    </>
   );
 }
