@@ -16,8 +16,8 @@ export function Transparency() {
             />
             <div className="relative mt-10 aspect-[4/3] overflow-hidden rounded-3xl shadow-lift">
               <Image
-                src="/images/calves-shelter.jpg"
-                alt="Two calves looking out from a farm shelter"
+                src="/images/buffalo-calf.jpg"
+                alt="A young buffalo standing in a village farmyard"
                 fill
                 sizes="(min-width: 1024px) 40vw, 100vw"
                 className="object-cover"

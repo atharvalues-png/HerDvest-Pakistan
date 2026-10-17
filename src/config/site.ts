@@ -82,6 +82,7 @@ export const footerNav = {
     { label: "Risk Disclosure", href: "/legal/risk-disclosure" },
     { label: "Management Agreement", href: "/legal/agreement" },
     { label: "Shariah Review", href: "/legal/shariah" },
+    { label: "Photo Credits", href: "/credits" },
   ],
 } as const;
 

@@ -1,99 +1,106 @@
 /**
- * Illustrative profit-sharing calculation.
+ * Illustrative profit-sharing calculation for the public website.
  *
- *   Profit pool              = sale proceeds − initial purchase price
- *   Investor gross share     = profit pool × investor share %
- *   Farmer share             = profit pool × farmer share % (100 − investor %)
- *   Herdvest service fee     = investor gross share × service fee %
- *   Investor net profit      = investor gross share − Herdvest service fee
+ * Agreed simplified model (the same rules are implemented in the database
+ * function hv.calculate_settlement used by the management system):
+ *
+ *   Total initial investment = purchase price per animal × number of animals
+ *   Total sale proceeds      = sale price per animal × number of animals
+ *   Profit pool              = total sale proceeds − total initial investment
+ *   Investor gross share     = profit pool × 50%
+ *   Farmer share             = profit pool × 50%
+ *   Herdvest fee             = investor gross share × 20%   (once per completed sale)
+ *   Investor net profit      = investor gross share − Herdvest fee
  *   Investor total proceeds  = capital returned + investor net profit
  *
- * If the sale proceeds are below the purchase price, no profit is shared.
- * In this simplified illustration the available proceeds go toward the
- * investor's capital and the remainder is shown as a capital shortfall.
- * Real loss allocation is defined by the signed agreement.
+ * Initial capital is returned before the remaining profit is divided. If sale
+ * proceeds are below the investment, no profit is shared: the proceeds go
+ * toward capital and the remainder is shown as a capital shortfall. Actual
+ * loss allocation is set by the signed agreement.
+ *
+ * Arithmetic is done in integer paisa so results are exact.
  */
+import { MODEL } from "@/config/business";
 
 export type CalculatorInput = {
-  purchasePrice: number;
-  salePrice: number;
+  pricePerAnimal: number; // PKR
+  quantity: number; // whole animals
+  salePricePerAnimal: number; // PKR
   holdingYears: number;
-  investorSharePct: number;
-  serviceFeePct: number;
 };
 
 export type CalculatorResult = {
   isLoss: boolean;
-  profitPool: number; // negative when there is a loss
+  totalInvestment: number;
+  totalSaleProceeds: number;
+  profitPool: number; // negative on a loss
   capitalReturned: number;
   capitalShortfall: number;
   investorGross: number;
-  serviceFee: number;
-  investorNet: number; // negative (= −shortfall) when there is a loss
   farmerShare: number;
+  serviceFee: number;
+  investorNet: number; // negative (−shortfall) on a loss
   investorTotal: number;
-  farmerSharePct: number;
-  /** Compound annualised rate; null when not meaningful. */
-  annualisedRate: number | null;
-  /** Total investor proceeds ÷ initial capital. */
-  proceedsMultiple: number;
+  /** Total proceeds ÷ investment − 1, over the whole holding period. */
+  holdingPeriodReturn: number | null;
+  /** Compound annual rate; null when not mathematically meaningful. */
+  annualisedReturn: number | null;
 };
 
-const clamp = (n: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, Number.isFinite(n) ? n : min));
+const toPaisa = (rupees: number) => Math.round(rupees * 100);
+const toRupees = (paisa: number) => paisa / 100;
+
+/** Largest total (in PKR) that can be calculated exactly. */
+export const MAX_EXACT_TOTAL = Math.floor(Number.MAX_SAFE_INTEGER / 100);
 
 export function calculate(input: CalculatorInput): CalculatorResult {
-  const purchase = Math.max(0, input.purchasePrice);
-  const sale = Math.max(0, input.salePrice);
+  const qty = Math.max(0, Math.floor(input.quantity));
+  const investment = toPaisa(Math.max(0, input.pricePerAnimal)) * qty;
+  const proceeds = toPaisa(Math.max(0, input.salePricePerAnimal)) * qty;
   const years = Math.max(0, input.holdingYears);
-  const investorPct = clamp(input.investorSharePct, 0, 100) / 100;
-  const feePct = clamp(input.serviceFeePct, 0, 100) / 100;
-  const farmerSharePct = 100 - investorPct * 100;
+  const pool = proceeds - investment;
 
-  const profitPool = sale - purchase;
-
-  if (profitPool < 0) {
-    const capitalReturned = sale;
-    const capitalShortfall = purchase - sale;
+  if (pool < 0) {
+    const shortfall = investment - proceeds;
     return {
       isLoss: true,
-      profitPool,
-      capitalReturned,
-      capitalShortfall,
+      totalInvestment: toRupees(investment),
+      totalSaleProceeds: toRupees(proceeds),
+      profitPool: toRupees(pool),
+      capitalReturned: toRupees(proceeds),
+      capitalShortfall: toRupees(shortfall),
       investorGross: 0,
-      serviceFee: 0,
-      investorNet: -capitalShortfall,
       farmerShare: 0,
-      investorTotal: capitalReturned,
-      farmerSharePct,
-      annualisedRate: null,
-      proceedsMultiple: purchase > 0 ? capitalReturned / purchase : 0,
+      serviceFee: 0,
+      investorNet: toRupees(-shortfall),
+      investorTotal: toRupees(proceeds),
+      holdingPeriodReturn: investment > 0 ? proceeds / investment - 1 : null,
+      annualisedReturn:
+        investment > 0 && proceeds > 0 && years > 0 ? Math.pow(proceeds / investment, 1 / years) - 1 : null,
     };
   }
 
-  const investorGross = profitPool * investorPct;
-  const farmerShare = profitPool - investorGross;
-  const serviceFee = investorGross * feePct;
-  const investorNet = investorGross - serviceFee;
-  const investorTotal = purchase + investorNet;
-
-  const annualisedRate =
-    purchase > 0 && years > 0 && investorTotal > purchase
-      ? Math.pow(investorTotal / purchase, 1 / years) - 1
-      : null;
+  // Integer division in paisa; any odd paisa from rounding goes to the farmer
+  // share so that investor + farmer always equals the pool exactly.
+  const investorGross = Math.floor((pool * MODEL.investorSharePct) / 100);
+  const farmerShare = pool - investorGross;
+  const fee = Math.round((investorGross * MODEL.serviceFeePct) / 100);
+  const investorNet = investorGross - fee;
+  const total = investment + investorNet;
 
   return {
     isLoss: false,
-    profitPool,
-    capitalReturned: purchase,
+    totalInvestment: toRupees(investment),
+    totalSaleProceeds: toRupees(proceeds),
+    profitPool: toRupees(pool),
+    capitalReturned: toRupees(investment),
     capitalShortfall: 0,
-    investorGross,
-    serviceFee,
-    investorNet,
-    farmerShare,
-    investorTotal,
-    farmerSharePct,
-    annualisedRate,
-    proceedsMultiple: purchase > 0 ? investorTotal / purchase : 0,
+    investorGross: toRupees(investorGross),
+    farmerShare: toRupees(farmerShare),
+    serviceFee: toRupees(fee),
+    investorNet: toRupees(investorNet),
+    investorTotal: toRupees(total),
+    holdingPeriodReturn: investment > 0 ? total / investment - 1 : null,
+    annualisedReturn: investment > 0 && years > 0 ? Math.pow(total / investment, 1 / years) - 1 : null,
   };
 }

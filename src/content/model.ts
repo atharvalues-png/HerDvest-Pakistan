@@ -8,8 +8,8 @@ export const stakeholders = [
     key: "investor",
     role: "Investor",
     contributes: "Provides capital",
-    image: "/images/zebu.jpg",
-    imageAlt: "A healthy white zebu cow standing in a farm enclosure",
+    image: "/images/buffalo-pond.jpg",
+    imageAlt: "A healthy black buffalo standing beside a pond",
     summary:
       "Supplies the capital used to purchase livestock and receives documented records, regular updates and a share of any profit under a signed agreement.",
     points: [
@@ -22,8 +22,8 @@ export const stakeholders = [
     key: "farmer",
     role: "Farmer Partner",
     contributes: "Provides daily care",
-    image: "/images/farmer.jpg",
-    imageAlt: "A farmer standing beside his cow on a village road",
+    image: "/images/farmer-milking.jpg",
+    imageAlt: "A farmer tending his black buffalo",
     summary:
       "Raises the allocated animal with daily feeding, shelter and welfare, and earns an agreed share of the profit for their skill and labour.",
     points: [
@@ -36,8 +36,8 @@ export const stakeholders = [
     key: "herdvest",
     role: "Herdvest",
     contributes: "Coordinates & manages",
-    image: "/images/feeding.jpg",
-    imageAlt: "Cattle feeding in a well-kept barn",
+    image: "/images/buffalo-young.jpg",
+    imageAlt: "Young buffaloes tethered at a farm beside a pond",
     summary:
       "Verifies farmers, coordinates sourcing, veterinary care and monitoring, reports progress, facilitates the sale and administers settlement.",
     points: [

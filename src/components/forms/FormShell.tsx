@@ -28,6 +28,8 @@ export function FormShell({
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<Status>("idle");
+  const [reference, setReference] = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,9 @@ export function FormShell({
         body: JSON.stringify({ type, values }),
       });
       const data = await res.json().catch(() => ({}));
+      setRateLimited(data.error === "rate_limited");
       if (res.ok && data.ok) {
+        setReference(typeof data.reference === "string" ? data.reference : null);
         setStatus("success");
         formRef.current?.reset();
       } else if (data.error === "not_configured") {
@@ -80,6 +84,7 @@ export function FormShell({
         <CircleCheck aria-hidden className="mx-auto h-10 w-10 text-emerald" />
         <h3 className="mt-4 text-xl font-semibold text-forest">{successTitle}</h3>
         <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-600">{successBody}</p>
+        {reference && <p className="mt-3 text-sm text-forest">Your reference: <strong>{reference}</strong></p>}
         <Button variant="outline" className="mt-6" onClick={() => setStatus("idle")}>
           Send another
         </Button>
@@ -116,10 +121,11 @@ export function FormShell({
           <div className="flex gap-3 rounded-xl border border-alert/30 bg-alert-50 p-4 text-sm leading-relaxed text-charcoal">
             <TriangleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-alert" />
             <div>
-              <p className="font-semibold text-alert">Something went wrong.</p>
+              <p className="font-semibold text-alert">{rateLimited ? "Too many submissions." : "Something went wrong."}</p>
               <p className="mt-1">
-                Your details may not have been sent. Please try again in a moment, or contact us
-                directly.
+                {rateLimited
+                  ? "We have already received several messages from you in the last hour. Please wait before sending another."
+                  : "Your details may not have been sent. Please try again in a moment, or contact us directly."}
               </p>
             </div>
           </div>

@@ -14,8 +14,8 @@ export function Hero() {
   return (
     <section className="grain relative isolate flex min-h-[100svh] items-end overflow-hidden bg-forest-950 text-ivory">
       <Image
-        src="/images/hero.jpg"
-        alt="A herd of cattle moving through warm, dusty evening light"
+        src="/images/buffalo-hero.jpg"
+        alt="Black buffaloes resting outside a rural farmhouse"
         fill
         priority
         sizes="100vw"

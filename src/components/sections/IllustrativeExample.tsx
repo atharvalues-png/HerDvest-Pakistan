@@ -1,5 +1,5 @@
 import { TriangleAlert } from "lucide-react";
-import { ILLUSTRATIVE_LABEL, illustrativeDefaults as d } from "@/config/business";
+import { ILLUSTRATIVE_LABEL, illustrativeDefaults as d, MODEL } from "@/config/business";
 import { calculate } from "@/lib/calculator";
 import { formatPKR } from "@/lib/format";
 import { ButtonLink, Container, Section, SectionHeading } from "@/components/ui/primitives";
@@ -15,13 +15,13 @@ export function IllustrativeExample({ tone = "sand" as "sand" | "ivory" | "white
   ];
 
   const steps = [
-    { n: "1", label: "Animal purchased", value: formatPKR(d.purchasePrice), note: "Investor capital" },
-    { n: "2", label: `Sold after ${d.holdingYears} years`, value: formatPKR(d.salePrice), note: "Illustrative sale price" },
+    { n: "1", label: "Animal purchased", value: formatPKR(d.pricePerAnimal), note: "Investor capital" },
+    { n: "2", label: `Sold after ${d.holdingYears} years`, value: formatPKR(d.salePricePerAnimal), note: "Illustrative sale price" },
     { n: "3", label: "Capital returned to investor", value: `− ${formatPKR(r.capitalReturned)}`, note: "Returned first, if proceeds allow" },
     { n: "4", label: "Profit pool", value: formatPKR(r.profitPool), note: "Sale − purchase price", strong: true },
-    { n: "5", label: `Farmer share (${r.farmerSharePct}%)`, value: formatPKR(r.farmerShare), note: "For daily care and husbandry" },
-    { n: "6", label: `Investor gross share (${d.investorSharePct}%)`, value: formatPKR(r.investorGross), note: "Before Herdvest's fee" },
-    { n: "7", label: `Herdvest fee (${d.serviceFeePct}% of investor share)`, value: `− ${formatPKR(r.serviceFee)}`, note: "Shown separately, never hidden" },
+    { n: "5", label: `Farmer share (${MODEL.farmerSharePct}%)`, value: formatPKR(r.farmerShare), note: "For daily care and husbandry" },
+    { n: "6", label: `Investor gross share (${MODEL.investorSharePct}%)`, value: formatPKR(r.investorGross), note: "Before Herdvest's fee" },
+    { n: "7", label: `Herdvest fee (${MODEL.serviceFeePct}% of investor share, once per sale)`, value: `− ${formatPKR(r.serviceFee)}`, note: "Shown separately, never hidden" },
     { n: "8", label: "Investor net profit", value: formatPKR(r.investorNet), note: "After the service fee", strong: true },
   ];
 
@@ -81,7 +81,7 @@ export function IllustrativeExample({ tone = "sand" as "sand" | "ivory" | "white
           <div className="flex flex-col gap-6">
             <div className="rounded-3xl bg-forest p-7 text-ivory shadow-lift">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">
-                Where the {formatPKR(d.salePrice)} goes
+                Where the {formatPKR(d.salePricePerAnimal)} goes
               </p>
               <div
                 className="mt-5 flex h-4 w-full gap-0.5 overflow-hidden rounded-full"
@@ -89,7 +89,7 @@ export function IllustrativeExample({ tone = "sand" as "sand" | "ivory" | "white
                 aria-label={segments.map((s) => `${s.label} ${formatPKR(s.value)}`).join(", ")}
               >
                 {segments.map((s) => (
-                  <span key={s.label} className={s.color} style={{ width: `${(s.value / d.salePrice) * 100}%` }} />
+                  <span key={s.label} className={s.color} style={{ width: `${(s.value / d.salePricePerAnimal) * 100}%` }} />
                 ))}
               </div>
               <ul className="mt-6 grid gap-3 text-sm sm:grid-cols-2">
@@ -122,7 +122,7 @@ export function IllustrativeExample({ tone = "sand" as "sand" | "ivory" | "white
             <p className="text-xs leading-relaxed text-ink-500">
               Assumes the purchase price is the only amount deducted before sharing, with no other
               costs, losses, taxes or contractual adjustments. If the animal were sold for less
-              than {formatPKR(d.purchasePrice)}, there would be no profit to share and the investor
+              than {formatPKR(d.pricePerAnimal)}, there would be no profit to share and the investor
               would not recover their full capital.
             </p>
             <div>

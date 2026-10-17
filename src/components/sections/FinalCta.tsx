@@ -16,7 +16,7 @@ export function FinalCta({
   return (
     <section className="relative isolate overflow-hidden bg-forest-950 py-24 text-ivory sm:py-32">
       <Image
-        src="/images/pasture.jpg"
+        src="/images/buffalo-bathing.jpg"
         alt=""
         fill
         sizes="100vw"

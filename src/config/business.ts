@@ -5,20 +5,27 @@
  * promise of returns. The final terms are set by the signed agreement.
  */
 
-export const illustrativeDefaults = {
-  purchasePrice: 100_000,
-  salePrice: 600_000,
-  holdingYears: 3,
-  investorSharePct: 50, // farmer share is always 100 - investorSharePct
-  serviceFeePct: 20, // applied to the investor's gross profit share
+/**
+ * The agreed simplified profit-sharing model. These are FIXED terms of the
+ * model and are not editable by website visitors. Herdvest's fee is charged
+ * once per completed animal sale — never per year of holding.
+ */
+export const MODEL = {
+  investorSharePct: 50,
+  farmerSharePct: 50,
+  serviceFeePct: 20, // of the investor's gross profit share
 } as const;
 
-export const calculatorLimits = {
-  purchasePrice: { min: 1_000, max: 50_000_000, step: 5_000 },
-  salePrice: { min: 0, max: 100_000_000, step: 5_000 },
-  holdingYears: { min: 0.5, max: 10, step: 0.5 },
-  investorSharePct: { min: 0, max: 100, step: 5 },
-  serviceFeePct: { min: 0, max: 100, step: 1 },
+/** Modelling categories only — not a claim that animals are always available at these prices. */
+export const purchasePriceCategories = [100_000, 150_000, 250_000] as const;
+
+export const holdingPeriodOptions = [1, 2, 3] as const;
+
+export const illustrativeDefaults = {
+  pricePerAnimal: 100_000,
+  quantity: 1,
+  salePricePerAnimal: 600_000,
+  holdingYears: 3,
 } as const;
 
 /** Enquiry preferences only — NOT minimum investment requirements. */

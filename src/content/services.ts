@@ -23,8 +23,8 @@ export const serviceDetails: Array<{
     title: "Selecting suitable animals at a documented price.",
     intro:
       "Herdvest aims to identify healthy, suitable animals from reputable sellers and markets, and to record exactly what was bought and for how much.",
-    image: "/images/zebu.jpg",
-    imageAlt: "A white zebu cow photographed in a farm enclosure",
+    image: "/images/buffalo-portrait.jpg",
+    imageAlt: "Close-up of a healthy black buffalo wearing a halter",
     procedures: [
       { label: "Assessment of breed, age, condition and visible health", status: "proposed" },
       { label: "Comparison against prevailing local market prices", status: "proposed" },
@@ -41,8 +41,8 @@ export const serviceDetails: Array<{
     title: "Partnering only with farmers we have checked.",
     intro:
       "A farmer's skill and integrity matter as much as the animal. Our proposed screening is designed to confirm who a farmer is, where they farm and whether their farm is suitable.",
-    image: "/images/farmer.jpg",
-    imageAlt: "A farmer standing with his cow on a rural road",
+    image: "/images/farmer-milking.jpg",
+    imageAlt: "A farmer tending his black buffalo",
     procedures: [
       { label: "Identity verification", status: "proposed" },
       { label: "Address and farm location verification, including a site visit", status: "proposed" },
@@ -60,8 +60,8 @@ export const serviceDetails: Array<{
     title: "Preventive care, vaccinations and treatment.",
     intro:
       "Herdvest coordinates qualified veterinary professionals to examine animals, keep vaccinations on schedule and respond when an animal needs treatment.",
-    image: "/images/cattle-white.jpg",
-    imageAlt: "A white cow standing in a farm yard",
+    image: "/images/buffalo-farm.jpg",
+    imageAlt: "A black buffalo standing in a farm yard",
     procedures: [
       { label: "Initial examination after purchase", status: "proposed" },
       { label: "Vaccination schedule appropriate to species and region", status: "proposed" },
@@ -78,8 +78,8 @@ export const serviceDetails: Array<{
     title: "Monthly updates you can actually see.",
     intro:
       "Investors receive regular, human updates — not a simulated live feed. Each month we aim to share video and photographs alongside notes on condition and welfare.",
-    image: "/images/feeding.jpg",
-    imageAlt: "Cattle feeding in a clean barn",
+    image: "/images/buffalo-young.jpg",
+    imageAlt: "Young buffaloes tethered at a farm beside a pond",
     procedures: [
       { label: "Monthly video update of the animal", status: "proposed" },
       { label: "Relevant photographs and condition notes", status: "proposed" },
@@ -96,8 +96,8 @@ export const serviceDetails: Array<{
     title: "Preparing, selling and settling — on the record.",
     intro:
       "When agreed conditions and market considerations support a sale, Herdvest coordinates the process and documents every figure used in settlement.",
-    image: "/images/sunset.jpg",
-    imageAlt: "Cattle grazing in a field at sunset",
+    image: "/images/buffalo-village.jpg",
+    imageAlt: "Black buffaloes walking along a village road",
     procedures: [
       { label: "Sale preparation and timing review (including seasonal demand)", status: "proposed" },
       { label: "Buyer discussions and offer evaluation", status: "proposed" },
