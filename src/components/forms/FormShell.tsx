@@ -51,6 +51,13 @@ export function FormShell({
       return;
     }
 
+    // The static GitHub Pages preview has no server: say honestly that nothing was sent.
+    if (process.env.NEXT_PUBLIC_STATIC_PREVIEW === "1") {
+      setStatus("not_configured");
+      requestAnimationFrame(() => statusRef.current?.focus());
+      return;
+    }
+
     setStatus("submitting");
     try {
       const res = await fetch("/api/enquiry", {

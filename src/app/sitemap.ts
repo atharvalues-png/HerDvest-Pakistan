@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { site } from "@/config/site";
 import { legalPages } from "@/content/legal";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = ["", "/how-it-works", "/services", "/investors", "/calculator", "/farmers", "/about", "/faq", "/contact"];
   return [
