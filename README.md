@@ -153,6 +153,8 @@ same deployment and add a host-based rewrite in `src/middleware.ts` (e.g. `inves
 
 ## Deployment
 
+**Render (recommended, one blueprint):** see [DEPLOY_RENDER.md](DEPLOY_RENDER.md) for click-by-click steps using `render.yaml`.
+
 **Database** — any managed PostgreSQL 15+ (Supabase, Neon, AWS RDS, DigitalOcean …). Run `scripts/migrate.mjs` with
 `DATABASE_ADMIN_URL` (owner/admin) from a trusted machine or CI; give the web app **only** `DATABASE_URL` for
 `herdvest_app`. Enable `DATABASE_SSL=true` where TLS is required. Configure automated backups and point-in-time recovery.

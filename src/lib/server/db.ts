@@ -21,17 +21,30 @@ declare global {
   var __hvPool: pg.Pool | undefined;
 }
 
+/**
+ * The app-role connection string: DATABASE_URL, or — on hosts that provide the
+ * database host separately (e.g. the Render blueprint) — built from DB_HOST,
+ * DB_PORT, DB_NAME and HERDVEST_APP_DB_PASSWORD. Always the herdvest_app role.
+ */
+export function appDatabaseUrl(): string | undefined {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  const { DB_HOST, DB_PORT, DB_NAME, HERDVEST_APP_DB_PASSWORD } = process.env;
+  if (!DB_HOST || !DB_NAME || !HERDVEST_APP_DB_PASSWORD) return undefined;
+  return `postgres://herdvest_app:${encodeURIComponent(HERDVEST_APP_DB_PASSWORD)}@${DB_HOST}:${DB_PORT || 5432}/${DB_NAME}`;
+}
+
 export function isDatabaseConfigured() {
-  return Boolean(process.env.DATABASE_URL);
+  return Boolean(appDatabaseUrl());
 }
 
 function pool() {
-  if (!process.env.DATABASE_URL) {
+  const url = appDatabaseUrl();
+  if (!url) {
     throw new Error("DATABASE_URL is not configured");
   }
   if (!globalThis.__hvPool) {
     globalThis.__hvPool = new pg.Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: url,
       max: Number(process.env.DATABASE_POOL_MAX ?? 10),
       ssl: process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: true } : undefined,
     });

@@ -15,7 +15,10 @@ import pg from "pg";
 loadEnvFile(".env.local");
 
 const adminUrl = process.env.DATABASE_ADMIN_URL;
-const appUrl = process.env.DATABASE_URL;
+// DATABASE_URL, or built from DB_HOST/DB_PORT/DB_NAME/HERDVEST_APP_DB_PASSWORD (Render blueprint)
+const appUrl = process.env.DATABASE_URL || (process.env.DB_HOST && process.env.DB_NAME && process.env.HERDVEST_APP_DB_PASSWORD
+  ? `postgres://herdvest_app:${encodeURIComponent(process.env.HERDVEST_APP_DB_PASSWORD)}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`
+  : undefined);
 if (!adminUrl || !appUrl) {
   console.error("DATABASE_ADMIN_URL and DATABASE_URL must be set (see .env.example).");
   process.exit(1);
@@ -43,7 +46,15 @@ try {
     await client.query(`create role herdvest_app login nosuperuser nocreatedb nocreaterole noinherit nobypassrls password '${pw}'`);
     console.log("created role herdvest_app");
   } else {
-    await client.query(`alter role herdvest_app login nosuperuser nobypassrls password '${pw}'`);
+    // Managed databases (Render, Supabase, RDS …) do not give the owner superuser rights, and only
+    // superusers may name SUPERUSER/BYPASSRLS in ALTER ROLE — so set the password, then verify the flags.
+    const { rows } = await client.query("select rolsuper from pg_roles where rolname = current_user");
+    if (rows[0].rolsuper) await client.query(`alter role herdvest_app login nosuperuser nobypassrls password '${pw}'`);
+    else await client.query(`alter role herdvest_app login password '${pw}'`);
+  }
+  const flags = (await client.query("select rolsuper, rolbypassrls from pg_roles where rolname = 'herdvest_app'")).rows[0];
+  if (flags.rolsuper || flags.rolbypassrls) {
+    throw new Error("herdvest_app must not be a superuser or bypass row-level security. Fix the role before deploying.");
   }
 
   await client.query("create schema if not exists hv_meta");

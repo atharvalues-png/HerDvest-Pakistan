@@ -1,0 +1,77 @@
+# Render Blueprint for Herdvest Pakistan (website + investor portal + management system).
+# Deploy: Render dashboard → New → Blueprint → choose this GitHub repository.
+# See DEPLOY_RENDER.md for the full step-by-step guide.
+#
+# Creates:
+#   * herdvest-db  — managed PostgreSQL 17 (Singapore)
+#   * herdvest-web — Node web service with a persistent disk for private uploads
+# Plans below are paid tiers: a persistent disk and a pre-deploy step are not
+# available on Render's free web plan. Check current prices on render.com.
+
+databases:
+  - name: herdvest-db
+    databaseName: herdvest
+    region: singapore
+    plan: basic-256mb
+    postgresMajorVersion: "17"
+    ipAllowList: []          # no access from the public internet; only Render services
+
+services:
+  - type: web
+    name: herdvest-web
+    runtime: node
+    region: singapore
+    plan: starter
+    numInstances: 1            # one instance: uploads live on this service's disk
+    branch: main
+    autoDeploy: true
+    buildCommand: npm ci && npm run build
+    # Applies db/migrations once each and (re)creates the non-privileged herdvest_app role.
+    preDeployCommand: node scripts/migrate.mjs
+    startCommand: npm start
+    healthCheckPath: /
+    disk:
+      name: herdvest-files
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      # Owner connection: used only by scripts/migrate.mjs and scripts/create-admin.mjs.
+      # The web app itself connects as herdvest_app (built from the values below).
+      - key: DATABASE_ADMIN_URL
+        fromDatabase: { name: herdvest-db, property: connectionString }
+      - key: DB_HOST
+        fromDatabase: { name: herdvest-db, property: host }
+      - key: DB_PORT
+        fromDatabase: { name: herdvest-db, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: herdvest-db, property: database }
+      - key: HERDVEST_APP_DB_PASSWORD
+        generateValue: true
+      - key: DATABASE_SSL
+        value: "false"         # Render's private network; the database is not exposed publicly
+      - key: FILE_STORAGE_DIR
+        value: /var/data/storage
+      - key: BUSINESS_TIMEZONE
+        value: Asia/Karachi
+      - key: SESSION_HOURS
+        value: "12"
+      - key: PORTAL_SESSION_HOURS
+        value: "8"
+      # Set these in the dashboard after the first deploy (your onrender.com URL or your own domain).
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: PORTAL_BASE_URL
+        sync: false
+      # Optional — email. Leave empty until a Resend account and verified sender are ready and tested.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: PORTAL_FROM_EMAIL
+        sync: false
+      - key: ENQUIRY_NOTIFY_EMAIL
+        sync: false
+      - key: ENQUIRY_FROM_EMAIL
+        sync: false

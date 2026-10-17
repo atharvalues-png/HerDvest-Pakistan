@@ -1,5 +1,5 @@
 import { requireUser } from "@/lib/auth/session";
-import { withUser } from "@/lib/server/db";
+import { isDatabaseConfigured, withUser } from "@/lib/server/db";
 import { getSettings } from "@/lib/erp/settings";
 import { isStorageConfigured } from "@/lib/server/storage";
 import { Badge, Card, PageHeader } from "@/components/erp/ui";
@@ -15,7 +15,7 @@ export default async function SettingsPage() {
     types: (await db.query("select id, label from hv.livestock_types order by label")).rows,
   }));
   const integrations: Array<[string, boolean, string]> = [
-    ["Database (DATABASE_URL)", Boolean(process.env.DATABASE_URL), "PostgreSQL connection for the app role"],
+    ["Database (DATABASE_URL)", isDatabaseConfigured(), "PostgreSQL connection for the app role"],
     ["Private file storage (FILE_STORAGE_DIR)", isStorageConfigured(), "Local disk storage; use a persistent volume or replace with a private bucket"],
     ["Enquiry email notifications (RESEND_API_KEY + ENQUIRY_NOTIFY_EMAIL)", Boolean(process.env.RESEND_API_KEY && process.env.ENQUIRY_NOTIFY_EMAIL), "Optional email alert when a website enquiry arrives"],
     ["Email intake webhook (INTAKE_WEBHOOK_SECRET)", Boolean(process.env.INTAKE_WEBHOOK_SECRET), "Needs an inbound-email provider configured to POST to /api/intake/email"],
