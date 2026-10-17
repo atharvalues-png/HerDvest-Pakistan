@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, LogIn } from "lucide-react";
 import { mainNav } from "@/config/site";
 import { cn } from "@/lib/format";
 import { Logo } from "./Logo";
@@ -90,6 +90,16 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <Link
+            href="/portal/login"
+            className={cn(
+              "hidden items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors md:inline-flex",
+              solid ? "text-forest hover:bg-forest/5" : "text-ivory hover:bg-ivory/10",
+            )}
+          >
+            <LogIn aria-hidden className="h-4 w-4" />
+            Investor Login
+          </Link>
+          <Link
             href="/investors#enquiry"
             className={cn(
               "hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors sm:inline-flex",
@@ -161,6 +171,15 @@ export function Header() {
               className="inline-flex items-center justify-center gap-2 rounded-full border border-forest/25 px-6 py-3.5 text-sm font-semibold text-forest"
             >
               Become a Partner Farmer
+            </Link>
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-forest/10 pt-6 text-sm">
+            <Link href="/portal/login" className="inline-flex items-center gap-2 font-semibold text-forest">
+              <LogIn aria-hidden className="h-4 w-4" />
+              Investor Login
+            </Link>
+            <Link href="/management/login" className="text-ink-500 hover:text-forest">
+              Staff Login
             </Link>
           </div>
           <p className="mt-8 text-xs leading-relaxed text-ink-500">

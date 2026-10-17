@@ -1,10 +1,10 @@
 # Test report — Herdvest website & Management System
 
-Date: 16 October 2026 · Environment: macOS, Node 24, PostgreSQL 17.11 (local), Next.js 15.5 dev + production build.
+Date: 16 October 2026 (investor portal added 17 October 2026) · Environment: macOS, Node 24, PostgreSQL 17.11 (local), Next.js 15.5 dev + production build.
 
 This report lists only what was actually executed. "Not tested" items are called out explicitly.
 
-## 1. Automated tests (`npm test`) — 29 / 29 passing
+## 1. Automated tests (`npm test`) — 56 / 56 passing
 
 Run against a freshly created `herdvest_test` database with all migrations applied, connecting as the
 non-privileged `herdvest_app` role so row-level security is in force.
@@ -26,6 +26,7 @@ non-privileged `herdvest_app` role so row-level security is in force.
 | Enquiries | Public enquiry stored via insert-only function, unreadable publicly, visible to staff, converted to a prospective investor with no deposit | ✅ |
 | Calculator | 100k→600k example; 250k→600k; fee identical for 1/2/3/7.5-year holds; 37 animals; 5,000 animals (no cap); loss case; exact split of odd amounts | ✅ |
 | Reports | All 15 report queries run with no filters and with every filter set; sale status and investment-status filters narrow results correctly; investor statement renders a valid PDF | ✅ |
+| Investor portal (27 tests, `tests/portal.test.ts`) | Two investors with their own deposits, animals and sessions. See §5 for the acceptance criteria they cover. | ✅ |
 | Intake parser | Brief's example message → inspection + vaccination + PKR 2,500 expense for HV-001 with charge-type decision flagged; no-ID message flagged; multiple IDs and possible death flagged | ✅ |
 
 ## 2. Manual end-to-end checks in the browser (dev server)
@@ -77,3 +78,38 @@ non-privileged `herdvest_app` role so row-level security is in force.
   through the browser.
 * Accessibility audit with a screen reader; cross-browser testing beyond Chromium.
 * Independent security review / penetration test.
+
+## 5. Investor portal — acceptance criteria (added 17 October 2026)
+
+"Automated" means executed by `tests/portal.test.ts` against PostgreSQL as the app role; "Browser" means done by hand on
+the local dev server with test investors INV-0001 (two animals) and a second test investor INV-0002 (HV-003).
+
+| # | Criterion | Automated | Browser |
+| --- | --- | --- | --- |
+| 1 | Investor A sees only A's animals | ✅ | ✅ INV-0001 sees HV-001, HV-002 only |
+| 2 | Investor B sees only B's animals | ✅ | Not done in the browser (B was not given a login) |
+| 3 | Changing an id in a URL / parameter reveals nothing | ✅ every per-animal function with B's id → 0 rows | ✅ `/portal/livestock/<HV-003 id>` → HTTP 404 |
+| 4 | A cannot download B's documents | ✅ `portal_file(B's file)` → nothing | ✅ own unshared file and an internal intake file → 404; shared file → 200 |
+| 5 | Investor cannot access the management system | ✅ investor session reads 0 rows from 15 base tables and cannot call staff workflows | ✅ with only the investor cookie: `/management/*`, staff files and staff PDF exports redirect to staff sign-in |
+| 6 | Field employee cannot see all investor finances | ✅ 0 portal accounts, ledger rows, investors, payment requests; cannot invite or record weights on unassigned animals | — |
+| 7 | Authorised admin can manage records | ✅ invite, reset, suspend, restore, revoke, publish, forecasts, payment requests (with role checks) | ✅ invited INV-0001, published VET-00001 with a summary, recorded and published a weight, drafted and published a forecast |
+| 8 | Forecasts separate from actual transactions | ✅ forecasts never appear in transactions; draft forecasts not counted | ✅ draft not shown ("Forecast not yet available"); after publishing, shown only in Outlook with the risk notice |
+| 9 | Actual weights distinct from estimates | ✅ unpublished/voided weights excluded; weights cannot be edited | ✅ chart: solid line = measurements, dashed = published estimate; growth text uses measurements only |
+| 10 | Reports invisible before publication | ✅ unpublished completed report shows only "awaiting review" (no findings); editing a published report withdraws it | ✅ HV-001 showed "Awaiting review" until published |
+| 11 | Account can be suspended / revoked | ✅ access ends immediately; old sessions are not revived by restoring | Not clicked in the browser |
+| 12 | Password reset and logout | ✅ reset tokens single-use, end other sessions; logout revokes session | ✅ activation link → password set → sign-in; sign-out → files/statement redirect to sign-in; "forgot password" says email isn't switched on. Staff "reset link" button not clicked; reset email not tested (no email provider) |
+| 13 | Usable on mobile | — | ✅ dashboard and transactions at 375 px: no horizontal scroll, nav scrolls. Not tested on real phones |
+| 14 | Missing data shown honestly | ✅ summary returns null estimate when no forecast | ✅ "Not yet recorded", "No published assessment", "Forecast not yet available", "Not recorded" budget, "No photograph published yet" |
+
+Also executed: two-step verification in the browser (setup with an independently computed TOTP code; next sign-in
+required a code; a wrong code was rejected; before the code, pages redirected and the statement returned 401). Investor
+statement PDF renders (automated) and downloads as `application/pdf` (browser); settlement figures and payment requests
+never appear in its cash columns. Loss forecasts produce a shortfall, no fee (automated). Identity numbers are stored
+separately, masked as `•••••-••••••7-1`, and only staff with sensitive-document access can set them (automated).
+
+Defects found and fixed while testing the portal: a trigger referenced vet-record fields on other tables; purchase
+allocations awaiting reconciliation showed as 0 allocated; the staff portal page selected restricted password columns
+(caught in the browser, fixed by listing columns); the portal dashboard title used the site template.
+
+Not tested: email delivery of invitations/resets/notifications (no provider configured); real mobile devices; screen
+readers; subdomain hosting; load.

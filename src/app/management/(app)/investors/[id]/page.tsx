@@ -9,6 +9,7 @@ import { History } from "@/components/erp/History";
 import { ConfirmAction, Checkbox, Input } from "@/components/erp/form";
 import { Badge, Card, DL, LinkButton, Money, PageHeader, StatusBadge } from "@/components/erp/ui";
 import { createAccount } from "../actions";
+import { PortalPanels } from "./PortalPanels";
 
 export const metadata = { title: "Investor" };
 
@@ -131,6 +132,8 @@ export default async function InvestorPage({ params }: { params: Promise<{ id: s
           </table>
         </div>
       </Card>
+
+      <PortalPanels user={user} investorId={id} investorEmail={inv.email} timeZone={timezone} accounts={d.accounts} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title={`Animals (${d.animals.length})`} bodyClassName="p-0">

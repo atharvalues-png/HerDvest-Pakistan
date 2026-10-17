@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LogoMark } from "@/components/layout/Logo";
 import { getSessionUser } from "@/lib/auth/session";
@@ -31,6 +32,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
         <p className="mt-6 text-center text-xs text-ivory/40">
           Access is logged. Contact your administrator if you need an account.
+        </p>
+        <p className="mt-3 text-center text-xs text-ivory/60">
+          Are you an investor? <Link href="/portal/login" className="font-semibold text-gold hover:underline">Sign in to the Investor Portal</Link> ·{" "}
+          <Link href="/" className="underline hover:text-ivory">Public website</Link>
         </p>
       </div>
     </div>

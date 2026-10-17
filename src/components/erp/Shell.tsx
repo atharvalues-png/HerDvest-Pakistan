@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   BookOpenCheck, ClipboardList, Cog, FileBarChart, HandCoins, HeartPulse, Inbox, LayoutDashboard, LogOut, Menu,
-  MessageSquareText, PawPrint, Receipt, Search, ShieldCheck, ShoppingCart, Siren, Tractor, UserCog, Users, Wallet, X,
+  MessageSquareText, MonitorSmartphone, PawPrint, Receipt, Search, ShieldCheck, ShoppingCart, Siren, Tractor, UserCog, Users, Wallet, X,
 } from "lucide-react";
 import { LogoMark } from "@/components/layout/Logo";
 import type { NavGroup } from "@/lib/erp/nav";
@@ -14,7 +14,7 @@ import { cn } from "@/lib/format";
 const icons: Record<string, typeof LayoutDashboard> = {
   dashboard: LayoutDashboard, tasks: ClipboardList, inbox: Inbox, investors: Users, ledger: Wallet, animals: PawPrint,
   purchases: ShoppingCart, farmers: Tractor, vet: HeartPulse, incidents: Siren, expenses: Receipt, sales: HandCoins,
-  reports: FileBarChart, intake: MessageSquareText, employees: BookOpenCheck, users: UserCog, audit: ShieldCheck, settings: Cog,
+  reports: FileBarChart, intake: MessageSquareText, employees: BookOpenCheck, users: UserCog, audit: ShieldCheck, settings: Cog, portal: MonitorSmartphone,
 };
 
 export function Shell({

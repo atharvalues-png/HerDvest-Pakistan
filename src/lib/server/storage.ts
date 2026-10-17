@@ -73,7 +73,7 @@ export function sniffMime(buf: Buffer): AllowedMime | null {
 
 export const entityTypes = [
   "investor", "account", "ledger_entry", "animal", "purchase", "farmer", "allocation", "vet_record", "expense", "task",
-  "sale", "settlement", "incident", "employee", "enquiry", "intake_item",
+  "sale", "settlement", "incident", "employee", "enquiry", "intake_item", "animal_weight", "payment_request",
 ] as const;
 
 export const attachmentCategories = [

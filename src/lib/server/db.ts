@@ -60,6 +60,29 @@ export async function withUser<T>(userId: string | null, fn: (db: Db) => Promise
   }
 }
 
+/**
+ * Investor-portal context. Only the SHA-256 of the investor's session token is
+ * passed to PostgreSQL; the hv.portal_* functions resolve the investor from it,
+ * so no investor id from the browser is ever trusted. hv.user_id stays empty,
+ * so every staff policy returns nothing.
+ */
+export async function withInvestor<T>(sessionHash: string, fn: (db: Db) => Promise<T>): Promise<T> {
+  const client = await pool().connect();
+  try {
+    await client.query("begin");
+    await client.query("select set_config('hv.user_id', '', true), set_config('hv.portal_session', $1, true)", [sessionHash]);
+    await client.query("select set_config('TimeZone', coalesce(hv.setting('timezone') #>> '{}', 'Asia/Karachi'), true)");
+    const result = await fn(client);
+    await client.query("commit");
+    return result;
+  } catch (err) {
+    await client.query("rollback").catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
 /** Anonymous context: only SECURITY DEFINER helpers (login, public enquiry) return data. */
 export const anonymous = <T>(fn: (db: Db) => Promise<T>) => withUser(null, fn);
 

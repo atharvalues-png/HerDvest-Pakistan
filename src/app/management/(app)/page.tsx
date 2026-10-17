@@ -92,7 +92,7 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title={`Welcome, ${user.fullName.split(" ")[0]}`} subtitle="Live figures from verified records. Every figure links to its source." />
+      <PageHeader title={`Welcome, ${user.fullName}`} subtitle={`Signed in as ${user.roleName}. Live figures from verified records — every figure links to its source.`} />
 
       {d.funds && Number(d.funds.decisions) > 0 && (
         <Alert tone="warn" title="Unallocated investor funds need a decision">

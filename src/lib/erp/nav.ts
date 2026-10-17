@@ -16,6 +16,7 @@ export const erpNav: NavGroup[] = [
       { href: "/management/enquiries", label: "Enquiries", icon: "inbox", perms: ["enquiries.read"] },
       { href: "/management/investors", label: "Investors", icon: "investors", perms: ["investors.read"] },
       { href: "/management/ledger", label: "Funding ledger", icon: "ledger", perms: ["finance.read"] },
+      { href: "/management/portal", label: "Investor portal", icon: "portal", perms: ["portal.manage", "portal.publish"] },
     ],
   },
   {

@@ -149,5 +149,11 @@ Nothing is committed to git yet. Not production-ready (no deployment, no live in
 5. Live email/WhatsApp intake and enquiry email alerts — need accounts and testing.
 6. Expense-allocation rules engine.
 7. OCR/AI receipt extraction feeding the existing review queue.
-8. Estimated livestock market value (needs a valuation method).
+8. Estimated livestock market value — now available as staff-published sale forecasts in the investor portal; an
+   independent valuation method is still a business decision.
 9. Tablet-width test pass.
+10. Investor portal email (invitations, resets, notifications) — implemented, needs a Resend account, verified sender
+    and testing. Subdomain hosting for the portal is documented but not configured.
+
+The investor portal (17 October 2026) is documented in README ("Investor portal") and its acceptance results are in
+TEST_REPORT §5.

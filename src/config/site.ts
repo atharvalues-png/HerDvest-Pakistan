@@ -69,6 +69,7 @@ export const footerNav = {
     { label: "Illustrative Calculator", href: "/calculator" },
     { label: "Risk Disclosure", href: "/legal/risk-disclosure" },
     { label: "Make an Enquiry", href: "/investors#enquiry" },
+    { label: "Investor Login", href: "/portal/login" },
   ],
   Farmers: [
     { label: "For Farmers", href: "/farmers" },
@@ -83,6 +84,7 @@ export const footerNav = {
     { label: "Management Agreement", href: "/legal/agreement" },
     { label: "Shariah Review", href: "/legal/shariah" },
     { label: "Photo Credits", href: "/credits" },
+    { label: "Staff Login", href: "/management/login" },
   ],
 } as const;
 

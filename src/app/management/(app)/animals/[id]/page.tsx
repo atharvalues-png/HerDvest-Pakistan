@@ -8,8 +8,9 @@ import { farmerOptions } from "@/lib/erp/options";
 import { Attachments } from "@/components/erp/Attachments";
 import { History } from "@/components/erp/History";
 import { ConfirmAction, FileField, Input, Select, Textarea } from "@/components/erp/form";
-import { Alert, Card, DL, LinkButton, Money, PageHeader, StatusBadge, Timeline } from "@/components/erp/ui";
+import { Alert, Badge, Card, DL, LinkButton, Money, PageHeader, StatusBadge, Timeline } from "@/components/erp/ui";
 import { allocateAnimal, setAnimalStatus, updateAnimal } from "../actions";
+import { AnimalPortalPanels } from "./PortalPanels";
 
 export const metadata = { title: "Animal" };
 
@@ -38,7 +39,7 @@ export default async function AnimalPage({ params }: { params: Promise<{ id: str
     const statusHistory = (await db.query(
       `select h.*, u.full_name who from hv.animal_status_history h left join hv.users u on u.id = h.changed_by where h.animal_id = $1 order by h.changed_at desc`, [id])).rows;
     const vet = (await db.query(
-      `select id, code, visit_type, status, coalesce(visit_date, scheduled_date) d, condition, weight_kg, vaccine_name, next_due_date, findings
+      `select id, code, visit_type, status, coalesce(visit_date, scheduled_date) d, condition, weight_kg, vaccine_name, next_due_date, findings, investor_visible
          from hv.vet_records where animal_id = $1 order by coalesce(visit_date, scheduled_date) desc nulls last`, [id])).rows;
     const expenses = (await db.query(
       `select e.id, e.code, e.description, e.status, e.charge_type, coalesce(ea.amount, e.amount) amount
@@ -178,6 +179,8 @@ export default async function AnimalPage({ params }: { params: Promise<{ id: str
         )}
       </Card>
 
+      <AnimalPortalPanels user={user} animalId={id} hasInvestor={!!a.investor_id} closed={closed} timeZone={timezone} />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Veterinary, vaccination & inspection records" bodyClassName="p-0">
           {d.vet.length === 0 ? <p className="p-5 text-sm text-ink-500">No records yet.</p> : (
@@ -186,7 +189,7 @@ export default async function AnimalPage({ params }: { params: Promise<{ id: str
                 <li key={v.id} className="px-5 py-2.5 text-sm">
                   <div className="flex items-center justify-between gap-2">
                     <Link href={`/management/veterinary/${v.id}`} className="font-semibold text-forest hover:underline">{v.code} · {label(v.visit_type)}</Link>
-                    <span className="flex items-center gap-2 text-xs text-ink-500">{formatDate(v.d, timezone)}<StatusBadge status={v.status} /></span>
+                    <span className="flex items-center gap-2 text-xs text-ink-500">{formatDate(v.d, timezone)}<StatusBadge status={v.status} />{v.status === "completed" && (v.investor_visible ? <Badge tone="green">Published</Badge> : a.investor_id ? <Badge>Not published</Badge> : null)}</span>
                   </div>
                   <p className="text-xs text-ink-500">{[v.condition && `Condition: ${v.condition}`, v.weight_kg && `${v.weight_kg} kg`, v.vaccine_name, v.next_due_date && `next due ${formatDate(v.next_due_date, timezone)}`].filter(Boolean).join(" · ")}</p>
                 </li>

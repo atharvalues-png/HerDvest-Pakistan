@@ -66,7 +66,7 @@ export function ActionForm({
         <p
           role={state.ok ? "status" : "alert"}
           className={cn(
-            "flex items-start gap-2 rounded-lg px-3 py-2 text-sm",
+            "flex items-start gap-2 rounded-lg px-3 py-2 text-sm [overflow-wrap:anywhere] whitespace-pre-line",
             state.ok ? "bg-emerald-50 text-emerald" : "bg-alert-50 text-alert",
           )}
         >
